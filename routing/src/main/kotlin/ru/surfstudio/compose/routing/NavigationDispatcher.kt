@@ -200,7 +200,7 @@ class NavigationDispatcher(
     }
 
     /**
-     * Clear data after change route
+     * Clear all custom data
      */
     fun clearAllData() {
         clearPagerData()
