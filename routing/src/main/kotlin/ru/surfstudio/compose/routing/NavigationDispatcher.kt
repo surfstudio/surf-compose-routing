@@ -200,9 +200,9 @@ class NavigationDispatcher(
     }
 
     /**
-     * Clear data after change route
+     * Clear all custom data
      */
-    private fun clearAllData() {
+    fun clearAllData() {
         clearPagerData()
         clearCallbacksData()
     }
@@ -274,7 +274,7 @@ class NavigationDispatcher(
     fun onBackPressed() {
         // check state callback
         val statePressCallback = onBackPressedCallbacks.isEmpty()
-                || onBackPressedCallbacks.map { it.invoke() }.contains(false)
+                || !onBackPressedCallbacks.map { it.invoke() }.contains(true)
 
         // check state callback force
         val statePressCallbackForce = onBackPressedCallbackForce == null
