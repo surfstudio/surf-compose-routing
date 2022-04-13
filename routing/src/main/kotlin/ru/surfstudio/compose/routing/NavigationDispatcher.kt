@@ -135,6 +135,7 @@ class NavigationDispatcher(
      * Create flow for listening
      */
     @Composable
+    @Deprecated("to backPressedData {}")
     fun <T> backPressedDataFlow(value: T? = null): StateFlow<T?> {
         val route by remember { mutableStateOf(currentDestination?.route.orEmpty()) }
         if (!listListener.containsKey(route)) {
@@ -146,9 +147,43 @@ class NavigationDispatcher(
     /**
      * For clear/change navigation data
      */
+    @Deprecated("to backPressedData {}")
     fun <T> onBackPressedFlowUpdate(data: T) {
         listListener[backDestination?.route]?.let {
             (it as MutableStateFlow<T?>).value = data
+        }
+    }
+
+    /**
+     * Listen data back
+     */
+    @Composable
+    fun <T> backPressedData(onChange: (T) -> Unit) {
+        currentDestination?.route?.let { route ->
+
+            // get listener
+            val listener: MutableStateFlow<T?>? = try {
+                if (!listListener.containsKey(route)) {
+                    listListener[route] = MutableStateFlow(null)
+                    listListener[route]
+                } else {
+                    listListener[route]
+                } as MutableStateFlow<T?>
+            } catch (ex: Exception) {
+                null
+            }
+
+            // listen
+            if (listener != null) {
+                val backData by listener.asStateFlow().collectAsState()
+                LaunchedEffect(backData) {
+                    if (backData != null) {
+                        onChange.invoke(backData as T)
+                        listener.value = null
+                        listListener.remove(route)
+                    }
+                }
+            }
         }
     }
 
