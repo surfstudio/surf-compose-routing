@@ -43,19 +43,10 @@ class NavigationDispatcher(
     val backPressedDispatcher: OnBackPressedDispatcher
 ) : DefaultLifecycleObserver {
 
-    override fun onCreate(owner: LifecycleOwner) {}
-
-    override fun onStart(owner: LifecycleOwner) {}
-
-    override fun onStop(owner: LifecycleOwner) {}
-
-    override fun onDestroy(owner: LifecycleOwner) {}
-
     /**
      * Lifecycle owner
      */
-    var lifecycleOwner: LifecycleOwner? = null
-        private set
+    private var lifecycleOwner: LifecycleOwner? = null
 
     /**
      * Data flow for back with data
@@ -207,7 +198,38 @@ class NavigationDispatcher(
             currentDestinationMutableFlow.value = destination
             // disable destination direction
             isBack = false
+            // add callback
+            lifecycleOwner?.let { owner ->
+                // clear lifecycle owner
+                navigatorCallback.remove()
+                // add custom callback
+                backPressedDispatcher.addCallback(owner, navigatorCallback)
+            }
         }
+    }
+
+    override fun onCreate(owner: LifecycleOwner) {
+        lifecycleOwner = owner
+    }
+
+    override fun onStart(owner: LifecycleOwner) {
+        lifecycleOwner = owner
+    }
+
+    override fun onResume(owner: LifecycleOwner) {
+        lifecycleOwner = owner
+    }
+
+    override fun onStop(owner: LifecycleOwner) {
+        lifecycleOwner = owner
+    }
+
+    override fun onDestroy(owner: LifecycleOwner) {
+        lifecycleOwner = owner
+    }
+
+    override fun onPause(owner: LifecycleOwner) {
+        lifecycleOwner = owner
     }
 
     init {
@@ -240,20 +262,6 @@ class NavigationDispatcher(
     fun clearAllData() {
         clearPagerData()
         clearCallbacksData()
-    }
-
-    override fun onResume(owner: LifecycleOwner) {
-        // save lifecycle owner
-        lifecycleOwner = owner
-        // add custom callback
-        backPressedDispatcher.addCallback(owner, navigatorCallback)
-    }
-
-    override fun onPause(owner: LifecycleOwner) {
-        // clear lifecycle owner
-        lifecycleOwner = null
-        // remove callback
-        navigatorCallback.remove()
     }
 
     /**
@@ -347,10 +355,6 @@ class NavigationDispatcher(
         navigatorCallback.remove()
         // onBackPressed
         backPressedDispatcher.onBackPressed()
-        // enable callback
-        lifecycleOwner?.let {
-            backPressedDispatcher.addCallback(it, navigatorCallback)
-        }
     }
 
     /**
