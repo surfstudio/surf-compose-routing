@@ -15,6 +15,7 @@
  */
 package ru.surfstudio.compose.routing
 
+import android.util.Log
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.OnBackPressedDispatcher
 import androidx.compose.runtime.*
@@ -32,6 +33,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import java.util.logging.Logger
 
 /**
  * Navigation dispatcher for routing with pager
@@ -42,6 +44,8 @@ class NavigationDispatcher(
     val controller: NavHostController,
     val backPressedDispatcher: OnBackPressedDispatcher
 ) : DefaultLifecycleObserver {
+
+    private val TAG = "ROUTING"
 
     /**
      * Lifecycle owner
@@ -169,9 +173,13 @@ class NavigationDispatcher(
                 val backData by listener.asStateFlow().collectAsState()
                 LaunchedEffect(backData) {
                     if (backData != null) {
-                        onChange.invoke(backData as T)
-                        listener.value = null
-                        listListener.remove(route)
+                        try {
+                            onChange.invoke(backData as T)
+                            listener.value = null
+                            listListener.remove(route)
+                        } catch (ex: ClassCastException) {
+                            Log.d(TAG, "onChange", ex)
+                        }
                     }
                 }
             }
