@@ -169,9 +169,12 @@ class NavigationDispatcher(
                 val backData by listener.asStateFlow().collectAsState()
                 LaunchedEffect(backData) {
                     if (backData != null) {
-                        onChange.invoke(backData as T)
-                        listener.value = null
-                        listListener.remove(route)
+                        try {
+                            onChange.invoke(backData as T)
+                            listener.value = null
+                            listListener.remove(route)
+                        } catch (ex: ClassCastException) {
+                        }
                     }
                 }
             }
