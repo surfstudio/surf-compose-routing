@@ -339,9 +339,9 @@ class NavigationDispatcher(
                         scope?.launch {
                             val index = it.currentPage - 1
                             if (skipOnBackPressPager.contains(index) && index - 1 >= 0) {
-                                it.animateScrollToPage(index - 1)
+                                it.scrollToPage(index - 1)
                             } else {
-                                it.animateScrollToPage(index)
+                                it.scrollToPage(index)
                             }
                         }
                     } else {
