@@ -33,7 +33,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import java.util.logging.Logger
 
 /**
  * Navigation dispatcher for routing with pager
@@ -404,11 +403,9 @@ class NavigationDispatcher(
      * Set pager [PagerState] and callback change
      */
     fun setPager(scope: CoroutineScope, state: PagerState, vararg skip: Int) {
-        if (pager == null) {
-            pager = state
-            this.scope = scope
-            skipOnBackPressPager = skip.toList()
-        }
+        this.pager = state
+        this.scope = scope
+        this.skipOnBackPressPager = skip.toList()
     }
 
     /**
