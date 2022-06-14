@@ -32,8 +32,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
-import java.util.logging.Logger
 
 /**
  * Navigation dispatcher for routing with pager
@@ -336,6 +336,9 @@ class NavigationDispatcher(
             pager?.let {
                 if (!it.isScrollInProgress) {
                     if (it.currentPage > 0 && pagerEnable) {
+
+                        Log.e("TAG", scope?.isActive.toString())
+
                         scope?.launch {
                             val index = it.currentPage - 1
                             if (skipOnBackPressPager.contains(index) && index - 1 >= 0) {
@@ -404,11 +407,9 @@ class NavigationDispatcher(
      * Set pager [PagerState] and callback change
      */
     fun setPager(scope: CoroutineScope, state: PagerState, vararg skip: Int) {
-        if (pager == null) {
-            pager = state
-            this.scope = scope
-            skipOnBackPressPager = skip.toList()
-        }
+        this.pager = state
+        this.scope = scope
+        this.skipOnBackPressPager = skip.toList()
     }
 
     /**
