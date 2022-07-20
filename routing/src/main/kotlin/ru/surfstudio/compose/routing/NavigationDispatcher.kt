@@ -18,6 +18,7 @@ package ru.surfstudio.compose.routing
 import android.util.Log
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.OnBackPressedDispatcher
+import androidx.compose.animation.core.AnimationConstants
 import androidx.compose.runtime.*
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.Lifecycle
@@ -28,6 +29,7 @@ import androidx.navigation.NavHostController
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.PagerState
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -338,9 +340,9 @@ class NavigationDispatcher(
                         scope?.launch {
                             val index = it.currentPage - 1
                             if (skipOnBackPressPager.contains(index) && index - 1 >= 0) {
-                                it.scrollToPage(index - 1)
+                                it.animateScrollToPage(index - 1)
                             } else {
-                                it.scrollToPage(index)
+                                it.animateScrollToPage(index)
                             }
                         }
                     } else {
@@ -415,6 +417,7 @@ class NavigationDispatcher(
         pager?.let {
             scope?.launch {
                 snapshotFlow { it.currentPage }.collectLatest {
+                    delay(AnimationConstants.DefaultDurationMillis.toLong())
                     change.invoke(it, pagerIndex > it)
                     pagerIndex = it
                 }
