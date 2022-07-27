@@ -196,10 +196,12 @@ class NavigationDispatcher(
             if (controller.previousBackStackEntry?.destination == null) {
                 destinationPathList.clear()
             }
-            if (isBack && destinationPathList.isNotEmpty()) {
+            if (isBack && destinationPathList.size > 1) {
                 destinationPathList.removeLast()
             } else {
-                destinationPathList.add(destination)
+                if (!destinationPathList.contains(destination)) {
+                    destinationPathList.add(destination)
+                }
             }
             // clear data
             clearAllData()
