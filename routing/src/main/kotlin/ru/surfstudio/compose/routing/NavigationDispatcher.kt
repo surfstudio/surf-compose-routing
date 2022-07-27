@@ -199,7 +199,9 @@ class NavigationDispatcher(
             if (isBack && destinationPathList.size > 1) {
                 destinationPathList.removeLast()
             } else {
-                destinationPathList.add(destination)
+                if (!destinationPathList.contains(destination)) {
+                    destinationPathList.add(destination)
+                }
             }
             // clear data
             clearAllData()
