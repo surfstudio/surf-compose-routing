@@ -196,7 +196,7 @@ class NavigationDispatcher(
             if (controller.previousBackStackEntry?.destination == null) {
                 destinationPathList.clear()
             }
-            if (isBack && destinationPathList.isNotEmpty()) {
+            if (isBack && destinationPathList.isNotEmpty() && destinationPathList.size > 1) {
                 destinationPathList.removeLast()
             } else {
                 destinationPathList.add(destination)
